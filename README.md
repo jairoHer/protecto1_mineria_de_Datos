@@ -35,13 +35,14 @@ Antes de comenzar, asegúrate de tener permisos de administrador en tu sistema y
    ```r
    version
 ```
-# Instalación y Uso de Paquetes en R
+## Instalación y Uso de Paquetes en R
 
 Este proyecto utiliza varios paquetes en R para realizar diversas tareas de análisis de datos. A continuación se detallan los pasos para instalar y cargar estos paquetes.
 
 ## Instalación de Paquetes
 
-Para instalar los paquetes, abre R o RStudio y ejecuta el siguiente código en la consola. Esto se asegurará de que todos los paquetes requeridos estén instalados en tu sistema.
+Para instalar los paquetes, abre R o RStudio y ejecuta el siguiente código en la consola. 
+Esto se asegurará de que todos los paquetes requeridos estén instalados en tu sistema.
 
 ```r
 # Instalación de paquetes
