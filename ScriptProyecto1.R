@@ -488,3 +488,53 @@ inspect(reglas_filtradas[500:600])
 inspect(reglas_filtradas[600:700]) 
 inspect(reglas_filtradas[1200:1300])
 
+
+
+#------------------------------Parte de analisis de la data de 2017,2018 y 2019.---------------------------
+names(data_2017_limpia)
+names(data_2018_limpia)
+names(data_2019_normal_limpia)
+names(data_2019_permanente_limpia_p2)
+
+#Unificamos la informacion de los años 2017,2018 y 2019
+
+df_data_17_18_19 <- rbind(data_2017_limpia, data_2018_limpia, data_2019_normal_limpia)
+names(df_data_17_18_19)
+
+#Eliminamos los decimales de los valores numericos para que los algoritmos apriori y fp growth funcionen correctamente
+columnas_a_limpiar <- c("MAIZ_SUPERFICIE", "FRIJOL_SUPERFICIE","ARROZ_SUPERFICIE","OTRO_SUPERFICIE"
+                        ,"MAIZ_PRODUCCION","FRIJOL_PRODUCCION","ARROZ_PRODUCCION")
+
+df_data_17_18_19 <- df_data_17_18_19 %>% mutate_at(vars(all_of(columnas_a_limpiar)), round)
+
+#Remplazamos los valores del campo ESTRATO a numerico
+
+df_data_17_18_19$Est[df_data_17_18_19$Est == "A"] <- 1
+df_data_17_18_19$Est[df_data_17_18_19$Est == "B"] <- 2
+df_data_17_18_19$Est[df_data_17_18_19$Est == "C"] <- 3
+df_data_17_18_19$Est[df_data_17_18_19$Est == "D"] <- 4
+df_data_17_18_19$Est[df_data_17_18_19$Est == "M"] <- 5
+df_data_17_18_19$Est[df_data_17_18_19$Est == "ML"] <- 5
+
+#Quito el campo Seg, ya que este es un ID unico por segmento de tierra a analizar
+#Tambien se quita el municipio, ya que se hara el analisis a nivel departamental
+df_data_17_18_19 <- df_data_17_18_19 %>% select(-Seg)
+df_data_17_18_19 <- df_data_17_18_19 %>% select(-Mun)
+names(df_data_17_18_19)
+
+#Ya con la data limpia podemos ejecutar APIORI
+reglas_data_17_18_19 <- apriori(df_data_17_18_19, parameter = list(support = 0.2, confidence = 0.5))
+
+
+#Inspeccionamos las asociaciones resultantes
+inspect(reglas_data_17_18_19[0:100]) 
+inspect(reglas_data_17_18_19[100:200]) 
+inspect(reglas_data_17_18_19[200:300]) 
+
+#Ejecucion de algorito fp growth
+
+reglas_data_17_18_19_fp <-fim4r(df_data_17_18_19,method = "fpgrowth",target = "rules", support = 0.2, confidence = 0.5)
+
+reglasframe <- as(reglas_data_17_18_19_fp,"data.frame")
+
+
