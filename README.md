@@ -32,9 +32,9 @@ Antes de comenzar, asegúrate de tener permisos de administrador en tu sistema y
 
 1. Abre **RStudio**.
 2. En la consola de R, escribe el siguiente comando para verificar que R está instalado correctamente:
-   ```r
-   version
-```
+	```r
+	version
+	```
 
 ## Instalación y Uso de Paquetes en R
 
