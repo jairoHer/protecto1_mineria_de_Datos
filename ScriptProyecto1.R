@@ -112,8 +112,8 @@ names(data_2019_permanente_limpia_p2)
 #Con estos 3 conjuntos de datos unidos
 
 
-#-------------------Analisis individual-------------------------------
-#-----------------------2015 ---------------------------------------
+#--------------------------------Analisis individual-------------------------------
+#-------------------------------------2015 ---------------------------------------
 names(data_2015_limpia)
 View(data_2015_limpia)
 
@@ -409,9 +409,12 @@ columnas_a_categorizar <- c("AGRICOLA", "CULTIVOS_ANUALES","ARROZ","FRIJOL","MAI
                             ,"TIERRA_EN_PREPARACION","RASTROJO","TIERRA_EN_DESCANSO","PASTO","PASTO_CULTIVADO","PASTO_NATURAL"
                             ,"BOSQUE_CON_PASTO","TIERRA_NO_AGRICOLA","MATORRAL","TIERRA_FORESTAL","OTROS_USOS")
 
-data_2015_limpia_apriori_fp[columnas_a_categorizar] <- lapply(data_2015_limpia_apriori_fp[columnas_a_categorizar], function(x) {
-  cut(x, breaks = c(0, 11, 21, 31, 41, 51, 61, 71, 81, 91, 101), labels = 1:10, right = FALSE)
-})
+data_2015_limpia_apriori_fp <- data_2015_limpia_apriori_fp %>% mutate_at(vars(all_of(columnas_a_categorizar)), round)
+
+#Esto queda descartado
+#data_2015_limpia_apriori_fp[columnas_a_categorizar] <- lapply(data_2015_limpia_apriori_fp[columnas_a_categorizar], function(x) {
+#  cut(x, breaks = c(0, 11, 21, 31, 41, 51, 61, 71, 81, 91, 101), labels = 1:10, right = FALSE)
+#})
 
 #Cambiamos los valores de la columna estrato de A,B,C,D a 1,2,3,4 respectivamente
 
@@ -428,21 +431,23 @@ data_2015_limpia_apriori_fp$ESTRATO[data_2015_limpia_apriori_fp$ESTRATO == "D"] 
 data_2015_limpia_apriori_fp <- data_2015_limpia_apriori_fp %>% select(-MUPIO)
 names(data_2015_limpia_apriori_fp)
 
-#Debido a problemas de memoria (8GB de memoria RAM) me veo obligado a quitar algunas columnas del dataset
-#Me enfocare especificamente solo en las tierras no agricolas
-data_2015_limpia_apriori_fp <- data_2015_limpia_apriori_fp %>% select(-TIERRA_NO_AGRICOLA,-MATORRAL,-TIERRA_FORESTAL,-OTROS_USOS)
-names(data_2015_limpia_apriori_fp)
+#Me enfocare en el terreno agricola, quito todo lo forestal, y el desglose del pasto, Tambien quito las columas resumen
+#de AGRICOLA,CULTIVOS_ANUALES, CULTIVOS_PERMANENTES, TIERRA_AGRICOLA_SIN_CULTIVO
 
+data_2015_limpia_apriori_fp <- data_2015_limpia_apriori_fp %>% select(-AGRICOLA,-CULTIVOS_PERMANENTES
+                                                                      ,-CULTIVOS_ANUALES,-TIERRA_AGRICOLA_SIN_CULTIVO)
+
+data_2015_limpia_apriori_fp <- data_2015_limpia_apriori_fp %>% select(-PASTO_CULTIVADO, -PASTO_NATURAL
+                                                                      , -BOSQUE_CON_PASTO, -TIERRA_NO_AGRICOLA
+                                                                      , -MATORRAL, -TIERRA_FORESTAL, -OTROS_USOS)
+
+names(data_2015_limpia_apriori_fp)
 
 
 #Ahora ya con la data mas limpia aplicamos APRIORI
 
 # Aumentar el tiempo máximo de ejecución a 60 segundos
-#reglas_2015_apriori <- apriori(data_2015_limpia_apriori_fp, parameter = list(support = 0.2, confidence = 0.5, maxtime = 60))
-
-
-#Se agrego un support de 0.3 por recomendacion de R, debido a conflictos en memoria al hacerlo con 0.2
-reglas_2015_apriori <- apriori(data_2015_limpia_apriori_fp, parameter = list(support=0.3, confidence=0.5))
+reglas_2015_apriori <- apriori(data_2015_limpia_apriori_fp, parameter = list(support = 0.2, confidence = 0.5, maxtime = 60))
 
 #Inspeccionamos las asociaciones resultantes
 inspect(reglas_2015_apriori[0:100]) 
@@ -453,8 +458,33 @@ inspect(reglas_2015_apriori[400:500])
 inspect(reglas_2015_apriori[500:600]) 
 inspect(reglas_2015_apriori[600:700]) 
 inspect(reglas_2015_apriori[700:800]) 
-
+inspect(reglas_2015_apriori[800:900])
+inspect(reglas_2015_apriori[900:1000])
+inspect(reglas_2015_apriori[1700:1800])
 
 #Aplicacion de fpgrowth a la data de 2015
+
+names(data_2015_limpia_apriori_fp)
+
+#Aplicar fp growth toma 10 minutos
 reglas_2015_fp_growth <- fim4r(data_2015_limpia_apriori_fp,method = "fpgrowth",target = "rules", support = 0.2, confidence = 0.5)
+
+#Busco asociaciones en donde aparezca el departamento
+reglas_lhs <- subset(reglas_2015_fp_growth, rhs %pin% "DEPTO")
+
+reglas_filtradas <- subset(reglas_2015_fp_growth, subset = support >= 0.2 & confidence >= 0.6 & confidence <= 0.8)
+
+#Reviso otras reglas en donde no se considere PASTO
+reglas_filtradas <- subset(reglas_filtradas, !(rhs %pin% "PASTO"))
+
+#Visualizamos las reglas de fp
+reglasframe <- as(reglas_filtradas,"data.frame")
+
+inspect(reglas_filtradas[0:100]) 
+inspect(reglas_filtradas[100:200])
+inspect(reglas_filtradas[200:300]) 
+inspect(reglas_filtradas[400:500]) 
+inspect(reglas_filtradas[500:600]) 
+inspect(reglas_filtradas[600:700]) 
+inspect(reglas_filtradas[1200:1300])
 
