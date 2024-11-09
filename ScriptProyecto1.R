@@ -6,6 +6,7 @@ library(readxl)
 library(dplyr)
 library(tidyr)
 library(fim4r)
+library(ggplot2)
 setwd("C:/Users/jairo/Documents/Maestria/Cuarto Trimestre/Introduccion a la mineria de datos/Proyecto 1")
 dir()
 
@@ -538,3 +539,62 @@ reglas_data_17_18_19_fp <-fim4r(df_data_17_18_19,method = "fpgrowth",target = "r
 reglasframe <- as(reglas_data_17_18_19_fp,"data.frame")
 
 
+#analisis de cluster mediante kmeans
+names(df_data_17_18_19)
+str(df_data_17_18_19)
+#Cambiamos las variables de tipo chr a num, para que se pueda aplicar kmeans
+df_data_17_18_19 <- df_data_17_18_19 %>% mutate_at(vars(all_of(c("Est","ET"))), as.numeric)
+
+#Revisamos la cantidad de NA por columna
+na_count_data <- colSums(is.na(df_data_17_18_19))
+print(na_count_data)
+#Revisamos las data completa donde ET es NA
+View(df_data_17_18_19 %>% filter(is.na(ET)))
+
+#Reemplazamos los NA por -1
+df_data_17_18_19[is.na(df_data_17_18_19)] <- -1
+
+names(df_data_17_18_19)
+
+#Ejecutamos kmeans con la data limpia
+data_cluster_17_18_19 <- kmeans(df_data_17_18_19, centers = 4, iter.max = 60,nstart=60)
+data_cluster_17_18_19 <- kmeans(df_data_17_18_19, centers=4)
+
+##Cluster revisando relacion entre la cantidad de prodcuto producido en quintales vs las hectareas usadas para producirlas
+ggplot(df_data_17_18_19, aes(x=MAIZ_SUPERFICIE, y=MAIZ_PRODUCCION, color= as.factor(data_cluster_17_18_19$cluster)))+
+  geom_point()+
+  geom_point(data = as.data.frame(data_cluster_17_18_19$centers), aes(x=MAIZ_SUPERFICIE, y=MAIZ_PRODUCCION ), color= 'black',size=4,shape=17)+
+  labs(title = "Maiz (qq) vs Maiz(ha)")+
+  theme_minimal()
+
+ggplot(df_data_17_18_19, aes(x=FRIJOL_SUPERFICIE, y=FRIJOL_PRODUCCION, color= as.factor(data_cluster_17_18_19$cluster)))+
+  geom_point()+
+  geom_point(data = as.data.frame(data_cluster_17_18_19$centers), aes(x=FRIJOL_SUPERFICIE, y=FRIJOL_PRODUCCION ), color= 'black',size=4,shape=17)+
+  labs(title = "Frijol (qq) vs Frijol (ha)")+
+  theme_minimal()
+
+ggplot(df_data_17_18_19, aes(x=ARROZ_SUPERFICIE, y=ARROZ_PRODUCCION, color= as.factor(data_cluster_17_18_19$cluster)))+
+  geom_point()+
+  geom_point(data = as.data.frame(data_cluster_17_18_19$centers), aes(x=ARROZ_SUPERFICIE, y=ARROZ_PRODUCCION ), color= 'black',size=4,shape=17)+
+  labs(title = "Arroz (qq) vs Arroz (ha)")+
+  theme_minimal()
+
+
+##Cluster para revisar las hectareas usadas para la siembra segun el departamento
+ggplot(df_data_17_18_19, aes(x=Dep, y=MAIZ_SUPERFICIE, color= as.factor(data_cluster_17_18_19$cluster)))+
+  geom_point()+
+  geom_point(data = as.data.frame(data_cluster_17_18_19$centers), aes(x=Dep, y=MAIZ_SUPERFICIE ), color= 'black',size=4,shape=17)+
+  labs(title = "Departamento vs Maiz(ha)")+
+  theme_minimal()
+
+ggplot(df_data_17_18_19, aes(x=Dep, y=FRIJOL_SUPERFICIE, color= as.factor(data_cluster_17_18_19$cluster)))+
+  geom_point()+
+  geom_point(data = as.data.frame(data_cluster_17_18_19$centers), aes(x=Dep, y=FRIJOL_SUPERFICIE ), color= 'black',size=4,shape=17)+
+  labs(title = "Departamento vs Maiz(ha)")+
+  theme_minimal()
+
+ggplot(df_data_17_18_19, aes(x=Dep, y=ARROZ_SUPERFICIE, color= as.factor(data_cluster_17_18_19$cluster)))+
+  geom_point()+
+  geom_point(data = as.data.frame(data_cluster_17_18_19$centers), aes(x=Dep, y=ARROZ_SUPERFICIE ), color= 'black',size=4,shape=17)+
+  labs(title = "Departamento vs Maiz(ha)")+
+  theme_minimal()
