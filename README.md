@@ -59,6 +59,9 @@ if (!requireNamespace("devtools", quietly = TRUE)) {
 }
 devtools::install_github("mhahsler/fim4r")
 ```
+
+Ya con R instalado, y con los paquetes instalados se deberia poder ejecutar el archivo .R con normalidad
+
 ## Data a utilizar
 
 Para poder ejecutar el proyecto debes descargar cargar los siguientes archivos que se encuentran en el repositorio:
@@ -70,3 +73,7 @@ data_2018 <- read_excel("Base de Datos Superficie ENA 2018-2019.xlsx", sheet = "
 data_2017 <- read_excel("Base de Datos Superficie ENA 2017.xlsx", sheet = "Hoja1", skip = 5)
 data_2015 <- read_excel("Base de Datos Superficie ENA 2015.xls", sheet = "BDD SUPERFICIE ENA 2015")
 ```
+
+Estos archivos son los que contienen la informacion sobre los cultivos y la superficie utilizada para producirlos en el pais de Guatemala
+
+La limpieza y manipulacion se encuentra mas detallada en el archivo ScriptProyecto1.R en forma de comentarios
