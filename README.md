@@ -1,7 +1,7 @@
 # Instalación de R y RStudio
 
 ## Requisitos Previos
-Antes de comenzar, asegúrate de tener permisos de administrador en tu sistema y una conexión a Internet activa.
+Para poder usar este script se debe instalar R y Rstudio, asi como diversos paquetes que permite realizar las diversas operaciones de mineria y clusterizacion, para ello seguir las siguientes instrucciones.
 
 ## Instalación de R
 
