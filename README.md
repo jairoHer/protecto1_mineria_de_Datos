@@ -59,3 +59,14 @@ if (!requireNamespace("devtools", quietly = TRUE)) {
 }
 devtools::install_github("mhahsler/fim4r")
 ```
+## Data a utilizar
+
+Para poder ejecutar el proyecto debes descargar cargar los siguientes archivos que se encuentran en el repositorio:
+
+```r
+data_2019_permanente <- read_excel("Base de Datos Permanentes ENA 2019-2020.xlsx", sheet = "2019 Permanentes", skip = 5)
+data_2019_normal <- read_excel("Data 2019.xlsx", sheet = "2019", skip = 5)
+data_2018 <- read_excel("Base de Datos Superficie ENA 2018-2019.xlsx", sheet = "2018", skip = 5)
+data_2017 <- read_excel("Base de Datos Superficie ENA 2017.xlsx", sheet = "Hoja1", skip = 5)
+data_2015 <- read_excel("Base de Datos Superficie ENA 2015.xls", sheet = "BDD SUPERFICIE ENA 2015")
+```
