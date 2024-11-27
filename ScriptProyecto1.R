@@ -590,11 +590,25 @@ ggplot(df_data_17_18_19, aes(x=Dep, y=MAIZ_SUPERFICIE, color= as.factor(data_clu
 ggplot(df_data_17_18_19, aes(x=Dep, y=FRIJOL_SUPERFICIE, color= as.factor(data_cluster_17_18_19$cluster)))+
   geom_point()+
   geom_point(data = as.data.frame(data_cluster_17_18_19$centers), aes(x=Dep, y=FRIJOL_SUPERFICIE ), color= 'black',size=4,shape=17)+
-  labs(title = "Departamento vs Maiz(ha)")+
+  labs(title = "Departamento vs Frijol(ha)")+
   theme_minimal()
 
 ggplot(df_data_17_18_19, aes(x=Dep, y=ARROZ_SUPERFICIE, color= as.factor(data_cluster_17_18_19$cluster)))+
   geom_point()+
   geom_point(data = as.data.frame(data_cluster_17_18_19$centers), aes(x=Dep, y=ARROZ_SUPERFICIE ), color= 'black',size=4,shape=17)+
-  labs(title = "Departamento vs Maiz(ha)")+
+  labs(title = "Departamento vs Arroz(ha)")+
   theme_minimal()
+
+#Exportamos la informacion para poder usarla en el proyecto dos donde se aplicaran 
+#Arboles de decision, random forest y redes neuronales
+
+#Datos de 2015
+
+
+#Datos de Ena de 2017, 2018 y 2019
+df_data_17_18_19
+write.csv(df_data_17_18_19, "df_data_17_18_19.csv", row.names = FALSE)
+
+#Datos de 2015
+data_2015_limpia_apriori_fp
+write.csv(data_2015_limpia_apriori_fp, "data_2015_limpia.csv", row.names = FALSE)
